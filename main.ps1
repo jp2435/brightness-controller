@@ -1,6 +1,7 @@
 param (
     [int]$Brightness = 5,        # Parâmetro opcional para o valor de brilho (padrão é 5)
-    [switch]$BrightnessReset     # Parâmetro opcional para redefinir o brilho para um valor específico
+    [switch]$BrightnessReset,    # Parâmetro opcional para redefinir o brilho para um valor específico
+    [switch]$Increment           # Parâmetro opcional para incrementar o brilho em vez de diminuir
 )
 
 # Função para obter o valor atual do brilho do monitor
@@ -25,12 +26,18 @@ if ($BrightnessReset) {
     Set-Brightness $Brightness
 }
 else {
-    # Se o parâmetro de brilho for enviado, adiciona o valor do parâmetro ao brilho atual
-    $newBrightness = $currentBrightness + $Brightness
+    # Se o parâmetro "Increment" for usado, incrementa o valor do brilho atual
+    if ($Increment) {
+        $newBrightness = $currentBrightness + $Brightness
+    }
+    else {
+        # Caso contrário, decrementa o valor do brilho atual
+        $newBrightness = $currentBrightness - $Brightness
+    }
 
     # Verifica se o novo valor está dentro do intervalo válido (0 a 100)
     $newBrightness = [Math]::Min([Math]::Max($newBrightness, 0), 100)
 
-    # Ajusta o brilho para o novo valor incrementado
+    # Ajusta o brilho para o novo valor
     Set-Brightness $newBrightness
 }
